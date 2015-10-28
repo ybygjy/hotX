@@ -109,7 +109,7 @@
                             <archive>
                                 <manifestEntries>
                                     <Agent-Class>com.github.airst.AgentClass</Agent-Class>
-                                    <Main-Class>com.github.airst.Engine</Main-Class>
+                                    <mainClass>com.github.airst.Engine</mainClass>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                     <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                 </manifestEntries>
