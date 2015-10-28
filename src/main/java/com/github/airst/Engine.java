@@ -47,7 +47,8 @@ public class Engine {
         try {
             new Engine(args);
         } catch (Throwable t) {
-            System.err.println("start hotX failed, because : " + getCauseMessage(t));
+            System.err.println("start hotX failed");
+            t.printStackTrace(System.err);
             System.exit(-1);
         }
     }
