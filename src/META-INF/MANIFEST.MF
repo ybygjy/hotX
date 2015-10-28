@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Agent-Class: com.ziqi.fastdev.AgentClass
-Main-Class: com.ziqi.fastdev.Engine
-Can-Redefine-Classes: true
-
