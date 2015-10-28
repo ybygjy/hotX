@@ -80,7 +80,7 @@ public class Engine {
                 vmObj = vmClass.getMethod("attach", vmdClass).invoke(null, attachVmdObj);
             }
             String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
-            vmClass.getMethod("loadAgent", String.class, String.class).invoke(vmObj, path + "=" + configure.getAppName());
+            vmClass.getMethod("loadAgent", String.class).invoke(vmObj, path + "=" + configure.getAppName());
         } finally {
             if (null != vmObj) {
                 vmClass.getMethod("detach", (Class<?>[]) null).invoke(vmObj, (Object[]) null);
