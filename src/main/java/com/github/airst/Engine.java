@@ -5,8 +5,6 @@ import joptsimple.OptionSet;
 
 import java.util.List;
 
-import static com.github.airst.utils.HotXStringUtils.getCauseMessage;
-
 /**
  * Description: Engine
  * User: qige
