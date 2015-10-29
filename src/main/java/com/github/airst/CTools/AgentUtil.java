@@ -1,5 +1,6 @@
 package com.github.airst.CTools;
 
+import com.github.airst.BTools.InnerUtil;
 import com.github.airst.CTools.server.Server;
 import com.github.airst.StaticContext;
 
@@ -29,7 +30,7 @@ public class AgentUtil {
         Class<?> aClass = ClassUtil.loadClass(code);
 
         if(runTest == null) {
-            Class<?> innerUtil = CommonUtil.attachClass("InnerUtil", StaticContext.getClassLoader());
+            Class<?> innerUtil = CommonUtil.attachClass(InnerUtil.class.getName(), StaticContext.getClassLoader());
             runTest = innerUtil.getDeclaredMethod("runTestMethod", Class.class, String[].class);
         }
 
