@@ -38,9 +38,23 @@ public class Server implements Runnable {
         }
     }
 
+    public void debug() throws Exception {
+        ServerSocket serverSocket = new ServerSocket(this.port);
+        System.out.println("server debug is ok.");
+        //开启serverSocket等待用户请求到来，然后根据请求的类别作处理
+        //在这里我只针对GET和POST作了处理
+        //其中POST具有解析单个附件的能力
+        while (true) {
+            Socket socket = serverSocket.accept();
+            System.out.println("new request coming.");
+
+            new Thread(new Worker(socket)).start();
+        }
+    }
+
     public static void main(String args[]) throws Exception {
-        Server server = new Server(8013);
-        server.service();
+        Server server = new Server(8080);
+        server.debug();
     }
 
     @Override

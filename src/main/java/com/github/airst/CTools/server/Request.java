@@ -82,6 +82,7 @@ public class Request {
 
     private void readBody(DataInputStream reader) throws Exception {
         byte[] bytes = CommonUtil.readStream(reader, contentLength);
+        System.out.write(bytes);
         boolean first = true;
         boolean binary = false;
         boolean flag = false;
@@ -100,15 +101,15 @@ public class Request {
                     if(line.contains(boundary)) {
                         first = false;
                     }
-                } else if(line.startsWith("Content-Disposition: form-data;")) {
+                } else if(line.startsWith("Content-Disposition: form-data")) {
                     int start = line.indexOf("name=\"") + "name=\"".length();
                     int end = line.indexOf("\"", start);
                     name = line.substring(start, end);
                     flag = true;
-                } else if(line.startsWith("Content-Type: application/octet-stream;")) {
+                } else if(line.startsWith("Content-Type: application/octet-stream")) {
                     binary = true;
                     flag = true;
-                }else if(line.equals("\r\n") && flag) {
+                }else if(streamStart ==0 && line.equals("\r\n") && flag) {
                     streamStart = j;
                 } else if(line.contains(boundary)) {
                     streamEnd = i - 2;
@@ -119,6 +120,7 @@ public class Request {
                         parameters.put(name, new String(data));
                     }
                     binary = false;
+                    streamStart = 0;
                 } else {
                     flag = false;
                 }
