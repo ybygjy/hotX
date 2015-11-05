@@ -89,9 +89,4 @@ public class CommonUtil {
         return classLoaders;
     }
 
-    public static void startHttpServer() throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(13001), 2);
-        server.start();
-    }
-
 }

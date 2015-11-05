@@ -7,6 +7,9 @@ import javassist.CtClass;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Description: HotCodeClassLoader
@@ -15,8 +18,6 @@ import java.lang.reflect.Method;
  * Time: 14:47
  */
 public class ClassUtil {
-
-    public static int index = 0;
 
     public static Class<?> loadClass(byte[] data) throws Exception {
         return defineClass(data, true);
@@ -35,7 +36,7 @@ public class ClassUtil {
     public static byte[] changeClassName(byte[] data) throws Exception {
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass = pool.makeClass(new ByteArrayInputStream(data));
-        ctClass.setName(ctClass.getName() + "_" + index++);
+        ctClass.setName(ctClass.getName() + "_" + getTimestamp());
         return ctClass.toBytecode();
 
     }
@@ -44,6 +45,41 @@ public class ClassUtil {
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass = pool.makeClass(new ByteArrayInputStream(data));
         return ctClass.getName();
+    }
+
+    public static byte[] replaceClassName(byte[] data, String oldClass, String newClass) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass ctClass = pool.makeClass(new ByteArrayInputStream(data));
+        ctClass.replaceClassName(oldClass, newClass);
+        return ctClass.toBytecode();
+    }
+
+    public static Class<?> loadClass(byte[] data, List<byte[]> subs) throws Exception {
+        ClassPool pool = ClassPool.getDefault();
+        CtClass ctClassM = pool.makeClass(new ByteArrayInputStream(data));
+
+        long temp = getTimestamp();
+        String oldM = ctClassM.getName();
+        ctClassM.setName(ctClassM.getName() + "_" + temp);
+        String newM = ctClassM.getName();
+
+        for(byte[] bytes : subs) {
+            CtClass ctClassS = pool.makeClass(new ByteArrayInputStream(bytes));
+            ctClassS.replaceClassName(oldM, newM);
+
+            String oldS = ctClassS.getName();
+            ctClassS.setName(ctClassS.getName() + "_" + temp);
+            String newS = ctClassS.getName();
+            ctClassM.replaceClassName(oldS, newS);
+
+            defineClass(ctClassS.toBytecode(), false);
+        }
+
+        return defineClass(ctClassM.toBytecode(), false);
+    }
+
+    public static long getTimestamp() {
+        return new Date().getTime();
     }
 
 }

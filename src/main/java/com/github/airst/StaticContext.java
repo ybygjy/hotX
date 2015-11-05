@@ -14,7 +14,7 @@ public class StaticContext {
 
     private static ClassLoader classLoader;
 
-    public static String appName = "";
+    private static String appName = "";
 
     public static Instrumentation getInst() {
         return inst;
@@ -38,5 +38,10 @@ public class StaticContext {
 
     public static void setAppName(String appName) {
         StaticContext.appName = appName;
+    }
+
+    public static void dispose() {
+        inst = null;
+        classLoader = null;
     }
 }

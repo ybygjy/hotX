@@ -7,6 +7,7 @@ import com.github.airst.StaticContext;
 import java.io.File;
 import java.lang.instrument.ClassDefinition;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Description: HotCodeUtil
@@ -22,15 +23,25 @@ public class AgentUtil {
     private static Method runTest;
 
     public static void runTestMethod(File classFile, String[] p) throws Exception {
-        runTestMethod(CommonUtil.readFile(classFile), p);
+        runTestMethod(CommonUtil.readFile(classFile), p, null);
     }
 
     //test method need be [public static void test()]
-    public static void runTestMethod(byte[] code, String[] p) throws Exception {
-        Class<?> aClass = ClassUtil.loadClass(code);
+    public static void runTestMethod(byte[] code, String[] p, List<byte[]> subClasses) throws Exception {
+        Class<?> aClass;
+        if(subClasses != null) {
+            aClass = ClassUtil.loadClass(code, subClasses);
+        } else {
+            aClass = ClassUtil.loadClass(code);
+        }
 
         if(runTest == null) {
-            Class<?> innerUtil = CommonUtil.attachClass(InnerUtil.class.getName(), StaticContext.getClassLoader());
+            Class<?> innerUtil;
+            try {
+                innerUtil = CommonUtil.attachClass(InnerUtil.class.getName(), StaticContext.getClassLoader());
+            } catch (Throwable e) {
+                innerUtil = StaticContext.getClassLoader().loadClass(InnerUtil.class.getName());
+            }
             runTest = innerUtil.getDeclaredMethod("runTestMethod", Class.class, String[].class);
         }
 
@@ -39,19 +50,24 @@ public class AgentUtil {
     }
 
     public static void replaceClassFile(File classFile) throws Exception {
-        replaceClassFile(CommonUtil.readFile(classFile));
+        replaceClassFile(CommonUtil.readFile(classFile), false);
     }
 
-    public static void replaceClassFile(byte[] newCode) throws Exception {
-        ClassLoader classLoader = StaticContext.getClassLoader();
-        Class targetClass = classLoader.loadClass(ClassUtil.getClassName(newCode));
+    public static void replaceClassFile(byte[] newCode, boolean self) throws Exception {
+        ClassLoader classLoader;
+        if(!self) {
+            classLoader = StaticContext.getClassLoader();
+        } else {
+            classLoader = AgentUtil.class.getClassLoader();
+        }
 
-        ClassDefinition classDef = new ClassDefinition(targetClass, newCode);
-        StaticContext.getInst().redefineClasses(classDef);
-    }
-
-    public static void runServer() {
-        new Thread(new Server(8080)).start();
+        try {
+            Class targetClass = classLoader.loadClass(ClassUtil.getClassName(newCode));
+            ClassDefinition classDef = new ClassDefinition(targetClass, newCode);
+            StaticContext.getInst().redefineClasses(classDef);
+        } catch (ClassNotFoundException e) {
+            CommonUtil.attachClass(newCode, classLoader);
+        }
     }
 
 }

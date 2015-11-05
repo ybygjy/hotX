@@ -48,12 +48,16 @@ attach_jvm() {
 # the main
 main()
 {
-
+    if [ x$1 == xshutdown ]
+    then
+    curl -d "option=shutdown" "http://127:0.0.1:8080"
+    else
     check_permission
     reset_for_env
 
     attach_jvm ${@}\
         || exit_on_err 1 "attach to target jvm(${1}) failed."
+    fi
 
 }
 

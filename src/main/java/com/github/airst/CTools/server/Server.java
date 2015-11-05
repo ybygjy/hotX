@@ -1,7 +1,9 @@
 package com.github.airst.CTools.server;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Description: Server
@@ -9,60 +11,44 @@ import java.net.Socket;
  * Date: 15/7/1
  * Time: 下午1:14
  */
-public class Server implements Runnable {
+public class Server {
 
     //端口
     private int port;
 
-    //mltipart/form-data方式提交post的分隔符,
-    private String boundary = null;
-
-    //post提交请求的正文的长度
-    private int contentLength = 0;
+    private ServerSocket serverSocket = null;
 
     public Server(int port) {
         this.port = port;
     }
 
     public void service() throws Exception {
-        ServerSocket serverSocket = new ServerSocket(this.port);
-        System.out.println("server is ok.");
-        //开启serverSocket等待用户请求到来，然后根据请求的类别作处理
-        //在这里我只针对GET和POST作了处理
-        //其中POST具有解析单个附件的能力
-        while (true) {
-            Socket socket = serverSocket.accept();
-            System.out.println("new request coming.");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (!serverSocket.isClosed()) {
+                        Socket socket = serverSocket.accept();
+                        System.out.println("new request coming.");
 
-            new Thread(new Worker(socket)).start();
+                        new Thread(new Worker(socket)).start();
+                    }
+                } catch (SocketException e) {
+                    System.out.println("server closed.");
+                } catch (Exception e) {
+                    e.printStackTrace(System.out);
+                }
+            }
+        }).start();
+    }
+
+    public void bind() throws IOException {
+        if(serverSocket == null) {
+            serverSocket = new ServerSocket(this.port);
         }
     }
 
-    public void debug() throws Exception {
-        ServerSocket serverSocket = new ServerSocket(this.port);
-        System.out.println("server debug is ok.");
-        //开启serverSocket等待用户请求到来，然后根据请求的类别作处理
-        //在这里我只针对GET和POST作了处理
-        //其中POST具有解析单个附件的能力
-        while (true) {
-            Socket socket = serverSocket.accept();
-            System.out.println("new request coming.");
-
-            new Thread(new Worker(socket)).start();
-        }
-    }
-
-    public static void main(String args[]) throws Exception {
-        Server server = new Server(8080);
-        server.debug();
-    }
-
-    @Override
-    public void run() {
-        try {
-            this.service();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void shutdown() throws IOException {
+        serverSocket.close();
     }
 }
