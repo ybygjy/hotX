@@ -38,7 +38,7 @@ reset_for_env()
 attach_jvm() {
     if [ x$1 == x ] || [ x$2 == x ]
     then
-    echo 'please use ./start.sh [pid] [appName]'
+    echo 'please use ./hotX.sh [pid] [appName]'
     else
     sudo -u admin /opt/taobao/java/bin/java ${BOOT_CLASSPATH} ${JVM_OPTS} \
             -jar ./.hotX/hotX-agent.jar -pid $1 -appName $2
