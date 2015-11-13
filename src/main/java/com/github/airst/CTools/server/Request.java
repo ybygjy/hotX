@@ -81,7 +81,7 @@ public class Request {
 
     private void readBody(DataInputStream reader) throws Exception {
         byte[] bytes = CommonUtil.readStream(reader, contentLength);
-        System.out.write(bytes);
+//        System.out.write(bytes);
         boolean first = true;
         boolean binary = false;
         boolean flag = false;
