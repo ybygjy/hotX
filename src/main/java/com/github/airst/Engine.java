@@ -3,6 +3,7 @@ package com.github.airst;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import java.io.*;
 import java.util.List;
 
 /**
@@ -29,8 +30,8 @@ public class Engine {
      */
     private Configure analyzeConfigure(String[] args) {
         final OptionParser parser = new OptionParser();
-        parser.accepts("pid").withRequiredArg().ofType(int.class).required();
-        parser.accepts("appName").withOptionalArg().ofType(String.class).required();
+        parser.accepts("pid").withRequiredArg().ofType(int.class);
+        parser.accepts("appName").withRequiredArg().ofType(String.class);
 
         final OptionSet os = parser.parse(args);
         final Configure configure = new Configure();
@@ -60,6 +61,8 @@ public class Engine {
         final Class<?> vmdClass = loader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
         final Class<?> vmClass = loader.loadClass("com.sun.tools.attach.VirtualMachine");
 
+        autoSetPid(configure);
+
         Object attachVmdObj = null;
         for (Object obj : (List<?>) vmClass.getMethod("list", (Class<?>[]) null).invoke(null, (Object[]) null)) {
             if ((vmdClass.getMethod("id", (Class<?>[]) null).invoke(obj, (Object[]) null)).equals(
@@ -87,6 +90,30 @@ public class Engine {
             }
         }
 
+    }
+
+    private void autoSetPid(Configure configure) throws IOException {
+        //String cmd = "ifconfig";//ok
+        //String cmd = "sar -u 1 1| awk 'NR==4 {print $8}'";//空白。管道不支持
+        String[] cmd = {"/bin/sh", "-c", "ps -ef | grep tomcat | awk '{print $2}'"};//ok
+        if(configure.getPid() == null) {
+            // 使用Runtime来执行command，生成Process对象
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(cmd);
+            // 取得命令结果的输出流
+            InputStream is = process.getInputStream();
+            // 用一个读输出流类去读
+            InputStreamReader isr = new InputStreamReader(is);
+            // 用缓冲器读行
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                configure.setPid(Integer.valueOf(line.trim()));
+            }
+            is.close();
+            isr.close();
+            br.close();
+        }
     }
 
 }

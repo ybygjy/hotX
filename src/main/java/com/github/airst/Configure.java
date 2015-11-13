@@ -8,15 +8,15 @@ package com.github.airst;
  */
 public class Configure {
 
-    private int pid;
+    private Integer pid;
 
     private String appName;
 
-    public int getPid() {
+    public Integer getPid() {
         return pid;
     }
 
-    public void setPid(int pid) {
+    public void setPid(Integer pid) {
         this.pid = pid;
     }
 

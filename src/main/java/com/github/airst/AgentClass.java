@@ -16,37 +16,43 @@ import java.net.URLClassLoader;
  */
 public class AgentClass {
 
+    private static volatile ClassLoader hotXGlobalLoader;
+
     public static void agentmain(String args, Instrumentation inst) throws Exception {
 
-        ClassLoader hotXLoader = new URLClassLoader(new URL[]{new URL("file:" +
-                AgentClass.class.getProtectionDomain().getCodeSource().getLocation().getFile())}) {
+        final ClassLoader hotXLoader;
+        // 如果已经被启动则返回之前启动的classloader
+        if (null != hotXGlobalLoader) {
+            hotXLoader = hotXGlobalLoader;
+        } else {
 
-            @Override
-            protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-                final Class<?> loadedClass = findLoadedClass(name);
-                if (loadedClass != null) {
-                    return loadedClass;
-                }
+            hotXLoader = new URLClassLoader(new URL[]{new URL("file:" +
+                    AgentClass.class.getProtectionDomain().getCodeSource().getLocation().getFile())}) {
 
-                try {
-                    Class<?> aClass = findClass(name);
-                    if (resolve) {
-                        resolveClass(aClass);
+                @Override
+                protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+                    final Class<?> loadedClass = findLoadedClass(name);
+                    if (loadedClass != null) {
+                        return loadedClass;
                     }
-                    return aClass;
-                } catch (Exception e) {
-                    return super.loadClass(name, resolve);
+
+                    try {
+                        Class<?> aClass = findClass(name);
+                        if (resolve) {
+                            resolveClass(aClass);
+                        }
+                        return aClass;
+                    } catch (Exception e) {
+                        return super.loadClass(name, resolve);
+                    }
                 }
-            }
 
-        };
-
-        Class<?> aClass = hotXLoader.loadClass("com.github.airst.StaticContext");
-        aClass.getMethod("setAppName", String.class).invoke(null, args);
-        aClass.getMethod("setInst", Instrumentation.class).invoke(null, inst);
+            };
+            hotXGlobalLoader = hotXLoader;
+        }
 
         Class<?> bClass = hotXLoader.loadClass("com.github.airst.HotXBoot");
-        bClass.getMethod("boot").invoke(null);
+        bClass.getMethod("boot", String.class, Instrumentation.class).invoke(null, args, inst);
 
         System.out.println("hotX boot finish..." + inst);
     }

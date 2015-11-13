@@ -36,13 +36,19 @@ reset_for_env()
 }
 
 attach_jvm() {
-    if [ x$1 == x ] || [ x$2 == x ]
+
+    if [ x$1 != x ]
     then
-    echo 'please use ./hotX.sh [pid] [appName]'
-    else
-    sudo -u admin /opt/taobao/java/bin/java ${BOOT_CLASSPATH} ${JVM_OPTS} \
-            -jar ./.hotX/hotX-agent.jar -pid $1 -appName $2
+    pid='-pid '$1
     fi
+
+    if [ x$2 != x ]
+    then
+    appName='-appName '$2
+    fi
+
+    sudo -u admin /opt/taobao/java/bin/java ${BOOT_CLASSPATH} ${JVM_OPTS} \
+            -jar ./.hotX/hotX-agent.jar $pid $appName
 }
 
 # the main
@@ -50,7 +56,7 @@ main()
 {
     if [ x$1 == xshutdown ]
     then
-    curl -d "option=shutdown" "http://127:0.0.1:8080"
+    curl -d "option=shutdown" "http://127.0.0.1:8080"
     else
     check_permission
     reset_for_env

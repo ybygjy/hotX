@@ -42,6 +42,7 @@ public class Execute {
         try {
 
             String msg = "";
+            String res = "ok";
             if (OPTION_RUN_TEST.equalsIgnoreCase(option)) {
                 String parameter = request.getParameter(OPTION_PARAMETER);
                 String[] p = null;
@@ -58,9 +59,14 @@ public class Execute {
                 doRunTest(request.getFile(MAIN_FILE), p, sub);
                 msg += "runTest " + request.getParameter(MAIN_FILE) + "\r\n";
             } else if (OPTION_SAVE_FILE.equalsIgnoreCase(option)) {
-                String savePath = request.getParameter(MAIN_FILE);
-                doSaveFile(request.getFile(MAIN_FILE), savePath);
-                msg += "saveFile " + savePath + "\r\n";
+                if(StaticContext.getAppName() != null) {
+                    String savePath = request.getParameter(MAIN_FILE);
+                    doSaveFile(request.getFile(MAIN_FILE), savePath);
+                    msg += "saveFile " + savePath + "\r\n";
+                } else {
+                    msg += "please use hotX.sh [appName] to start hotX for saveFile function";
+                    res = "failed";
+                }
             } else if (OPTION_HOT_SWAP.equalsIgnoreCase(option)) {
                 String self = request.getParameter("mode");
                 for(Map.Entry<String, byte[]> entry : fileMap.entrySet()) {
@@ -82,7 +88,7 @@ public class Execute {
 
             response.write(msg.getBytes());
             response.write(option.getBytes());
-            response.write(" --> [ok]\r\n".getBytes());
+            response.write((" --> [" + res + "]\r\n").getBytes());
             response.close();
 
         } catch (Exception e) {
