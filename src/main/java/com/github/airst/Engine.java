@@ -95,7 +95,8 @@ public class Engine {
     private void autoSetPid(Configure configure) throws IOException {
         //String cmd = "ifconfig";//ok
         //String cmd = "sar -u 1 1| awk 'NR==4 {print $8}'";//空白。管道不支持
-        String[] cmd = {"/bin/sh", "-c", "ps -ef | grep java | grep tomcat"};//ok
+        String c = "ps -ef | grep java | grep tomcat";
+        String[] cmd = {"/bin/sh", "-c", c};//ok
         if(configure.getPid() == null) {
             // 使用Runtime来执行command，生成Process对象
             Runtime runtime = Runtime.getRuntime();
@@ -108,10 +109,10 @@ public class Engine {
             BufferedReader br = new BufferedReader(isr);
             String line = null;
             while ((line = br.readLine()) != null) {
-                if(line.contains("ps -ef | grep java | grep tomcat")) {
+                if(line.contains(c)) {
                     continue;
                 }
-                line = line.split(" +")[1];
+                line = line.trim().split("\\s+")[1];
                 configure.setPid(Integer.valueOf(line.trim()));
                 System.out.println(configure.getPid());
             }
