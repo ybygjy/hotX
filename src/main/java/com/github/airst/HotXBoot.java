@@ -19,7 +19,7 @@ public class HotXBoot {
     public static synchronized void boot(String appName, Instrumentation inst) {
         try {
 
-            if(appName != null && !"null".equals(appName) && "".equals(appName)) {
+            if(appName != null && !"null".equals(appName) && !"".equals(appName)) {
                 StaticContext.setAppName(appName);
             }
             if(StaticContext.getInst() == null) {
