@@ -65,7 +65,7 @@ public class Execute {
                     doSaveFile(request.getFile(MAIN_FILE), savePath);
                     msg += "saveFile " + savePath + "\r\n";
                 } else {
-                    msg += "please use hotX.sh [pid] [appName] to start hotX for saveFile function";
+                    msg += "please use hotX.sh [pid] [appName] to start hotX for saveFile function" + "\r\n";
                     res = "failed";
                 }
             } else if (OPTION_HOT_SWAP.equalsIgnoreCase(option)) {
