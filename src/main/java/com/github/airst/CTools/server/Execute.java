@@ -2,6 +2,7 @@ package com.github.airst.CTools.server;
 
 import com.github.airst.CTools.CommonUtil;
 import com.github.airst.CTools.AgentUtil;
+import com.github.airst.CTools.StringUtil;
 import com.github.airst.HotXBoot;
 import com.github.airst.StaticContext;
 import org.springframework.util.CollectionUtils;
@@ -59,12 +60,12 @@ public class Execute {
                 doRunTest(request.getFile(MAIN_FILE), p, sub);
                 msg += "runTest " + request.getParameter(MAIN_FILE) + "\r\n";
             } else if (OPTION_SAVE_FILE.equalsIgnoreCase(option)) {
-                if(StaticContext.getAppName() != null) {
+                if(!StringUtil.isBlank(StaticContext.getAppName()) && !StringUtil.isNullStr(StaticContext.getAppName())) {
                     String savePath = request.getParameter(MAIN_FILE);
                     doSaveFile(request.getFile(MAIN_FILE), savePath);
                     msg += "saveFile " + savePath + "\r\n";
                 } else {
-                    msg += "please use hotX.sh [appName] to start hotX for saveFile function";
+                    msg += "please use hotX.sh [pid] [appName] to start hotX for saveFile function";
                     res = "failed";
                 }
             } else if (OPTION_HOT_SWAP.equalsIgnoreCase(option)) {

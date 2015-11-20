@@ -1,7 +1,9 @@
 package com.github.airst;
 
 import com.github.airst.CTools.CommonUtil;
+import com.github.airst.CTools.StringUtil;
 import com.github.airst.CTools.server.Server;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -19,7 +21,7 @@ public class HotXBoot {
     public static synchronized void boot(String appName, Instrumentation inst) {
         try {
 
-            if(appName != null && !"null".equals(appName) && !"".equals(appName)) {
+            if(!StringUtil.isBlank(appName) && !StringUtil.isNullStr(appName)) {
                 StaticContext.setAppName(appName);
             }
             if(StaticContext.getInst() == null) {
