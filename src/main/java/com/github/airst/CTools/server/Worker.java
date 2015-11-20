@@ -25,11 +25,12 @@ public class Worker implements Runnable {
             OutputStream out = socket.getOutputStream();
 
             //解析数据
-            Request request = new Request(in);
-            request.init();
-            //执行服务
             Response response = new Response(out);
 
+            Request request = new Request(in, response);
+            request.init();
+
+            //执行服务
             Execute execute = new Execute(request, response);
             execute.exec();
             socket.close();

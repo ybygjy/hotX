@@ -7,6 +7,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Description: HotXBoot
@@ -18,9 +20,11 @@ public class HotXBoot {
 
     public static Server server = null;
 
-    public static synchronized void boot(String appName, Instrumentation inst) {
-        try {
+    private static Method resetClassLoaderMethod = null;
 
+    public static synchronized void boot(String appName, Instrumentation inst, Method resetMethod) {
+        try {
+            resetClassLoaderMethod = resetMethod;
             if(!StringUtil.isBlank(appName) && !StringUtil.isNullStr(appName)) {
                 StaticContext.setAppName(appName);
             }
@@ -64,5 +68,7 @@ public class HotXBoot {
         server.shutdown();
         server = null;
         StaticContext.dispose();
+
+        resetClassLoaderMethod.invoke(null);
     }
 }

@@ -63,15 +63,13 @@ public class Execute {
                 if(!StringUtil.isBlank(StaticContext.getAppName()) && !StringUtil.isNullStr(StaticContext.getAppName())) {
                     String savePath = request.getParameter(MAIN_FILE);
                     doSaveFile(request.getFile(MAIN_FILE), savePath);
-                    msg += "saveFile " + savePath + "\r\n";
                 } else {
                     msg += "please use hotX.sh [pid] [appName] to start hotX for saveFile function" + "\r\n";
                     res = "failed";
                 }
             } else if (OPTION_HOT_SWAP.equalsIgnoreCase(option)) {
-                String self = request.getParameter("mode");
                 for(Map.Entry<String, byte[]> entry : fileMap.entrySet()) {
-                    doHotSwap(entry.getValue(), self);
+                    doHotSwap(entry.getValue());
                     msg += "hotSwap " + request.getParameter(entry.getKey()) + "\r\n";
                 }
             } else if(OPTION_SHUTDOWN.equalsIgnoreCase(option)) {
@@ -108,10 +106,10 @@ public class Execute {
 
     private void doSaveFile(byte[] data, String savePath) throws Exception {
         String appPath = "/home/admin/" + StaticContext.getAppName() + "/target/" + StaticContext.getAppName() + ".war" ;
-        System.out.println(appPath);
+        response.write((appPath + "\r\n").getBytes());
         File targetFile = findTargetFile(new File(appPath), savePath);
         if (targetFile != null && createFile(targetFile)) {
-            System.out.println(targetFile.getAbsolutePath());
+            response.write((targetFile.getAbsolutePath()  + "\r\n").getBytes());
             FileOutputStream writer = new FileOutputStream(targetFile);
             writer.write(data);
             writer.close();
@@ -130,9 +128,9 @@ public class Execute {
         return null;
     }
 
-    private void doHotSwap(byte[] data, String mode) throws Exception {
+    private void doHotSwap(byte[] data) throws Exception {
         if(data != null) {
-            AgentUtil.replaceClassFile(data, "self".equals(mode));
+            AgentUtil.replaceClassFile(data);
         }
     }
 

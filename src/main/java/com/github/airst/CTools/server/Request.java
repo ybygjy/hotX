@@ -16,6 +16,7 @@ import java.util.Map;
 public class Request {
 
     private InputStream in;
+    private Response out;
 
     private Map<String, String> parameters = new HashMap<String, String>();
 
@@ -48,8 +49,9 @@ public class Request {
         return files.get(name);
     }
 
-    public Request(InputStream in) {
+    public Request(InputStream in, Response out) {
         this.in = in;
+        this.out = out;
     }
 
     public void init() throws Exception {
@@ -60,13 +62,13 @@ public class Request {
         readBody(reader);
 
         long endTimeMillis = System.currentTimeMillis();
-        System.out.println("costs: " + (endTimeMillis - startTimeMillis));
+        out.write(("costs: " + (endTimeMillis - startTimeMillis) + "\r\n").getBytes());
     }
 
     private void readHead(DataInputStream reader) throws Exception {
         String line;
         while((line = reader.readLine()) != null) {
-            System.out.println(line);
+//            out.write(line.getBytes());
             if(line.contains("Content-Length")) {
                 contentLength = Integer.parseInt(line.substring(line.indexOf("Content-Length") + 16));
             }

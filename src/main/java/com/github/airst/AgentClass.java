@@ -5,6 +5,7 @@ import com.github.airst.CTools.CommonUtil;
 import com.github.airst.CTools.AgentUtil;
 
 import java.lang.instrument.Instrumentation;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -52,9 +53,13 @@ public class AgentClass {
         }
 
         Class<?> bClass = hotXLoader.loadClass("com.github.airst.HotXBoot");
-        bClass.getMethod("boot", String.class, Instrumentation.class).invoke(null, args, inst);
+        bClass.getMethod("boot", String.class, Instrumentation.class, Method.class).invoke(null, args, inst,
+                AgentClass.class.getMethod("resetHotXClassLoader"));
 
         System.out.println("hotX boot finish..." + inst);
     }
 
+    public synchronized static void resetHotXClassLoader() {
+        hotXGlobalLoader = null;
+    }
 }

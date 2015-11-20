@@ -50,19 +50,20 @@ public class AgentUtil {
     }
 
     public static void replaceClassFile(File classFile) throws Exception {
-        replaceClassFile(CommonUtil.readFile(classFile), false);
+        replaceClassFile(CommonUtil.readFile(classFile));
     }
 
-    public static void replaceClassFile(byte[] newCode, boolean self) throws Exception {
+    public static void replaceClassFile(byte[] newCode) throws Exception {
         ClassLoader classLoader;
-        if(!self) {
+        String className = ClassUtil.getClassName(newCode);
+        if(!className.startsWith("com.github.airst")) {
             classLoader = StaticContext.getClassLoader();
         } else {
             classLoader = AgentUtil.class.getClassLoader();
         }
 
         try {
-            Class targetClass = classLoader.loadClass(ClassUtil.getClassName(newCode));
+            Class targetClass = classLoader.loadClass(className);
             ClassDefinition classDef = new ClassDefinition(targetClass, newCode);
             StaticContext.getInst().redefineClasses(classDef);
         } catch (ClassNotFoundException e) {
