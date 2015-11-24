@@ -2,6 +2,7 @@ package com.github.airst.CTools.server;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 
 /**
@@ -20,14 +21,21 @@ public class Worker implements Runnable {
 
     @Override
     public void run() {
+        InputStream in = null;
+        OutputStream out = null;
         try {
-            InputStream in = socket.getInputStream();
-            OutputStream out = socket.getOutputStream();
+            in = socket.getInputStream();
+            out = socket.getOutputStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
-            //解析数据
-            Response response = new Response(out);
+        //解析数据
+        Response response = new Response(out);
+        Request request = new Request(in, response);
 
-            Request request = new Request(in, response);
+        try {
             request.init();
 
             //执行服务
@@ -35,7 +43,11 @@ public class Worker implements Runnable {
             execute.exec();
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            if(socket.isClosed() || socket.isOutputShutdown()) {
+                e.printStackTrace();
+            } else {
+                e.printStackTrace(new PrintStream(response.getOutputStream()));
+            }
         }
 
         System.out.println("socket closed.");

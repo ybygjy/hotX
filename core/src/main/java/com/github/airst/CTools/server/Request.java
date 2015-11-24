@@ -91,7 +91,7 @@ public class Request {
         int streamEnd = 0;
         String name = "";
 
-        if("".equals(boundary)) {
+        if("".equals(boundary) && contentLength > 0) {
             String line = new String(bytes);
             String[] items = line.split("&");
             for(String item : items) {

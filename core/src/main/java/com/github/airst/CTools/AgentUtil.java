@@ -1,7 +1,6 @@
 package com.github.airst.CTools;
 
 import com.github.airst.BTools.InnerUtil;
-import com.github.airst.CTools.server.Server;
 import com.github.airst.StaticContext;
 
 import java.io.File;

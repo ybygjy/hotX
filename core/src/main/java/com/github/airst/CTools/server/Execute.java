@@ -1,6 +1,5 @@
 package com.github.airst.CTools.server;
 
-import com.github.airst.CTools.CommonUtil;
 import com.github.airst.CTools.AgentUtil;
 import com.github.airst.CTools.StringUtil;
 import com.github.airst.HotXBoot;

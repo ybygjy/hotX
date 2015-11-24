@@ -83,6 +83,7 @@ public class Engine {
                 vmObj = vmClass.getMethod("attach", vmdClass).invoke(null, attachVmdObj);
             }
             String path = Engine.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+            path = path.replace("hotX-core.jar", "hotX-agent.jar");
             vmClass.getMethod("loadAgent", String.class).invoke(vmObj, path + "=" + configure.getAppName());
         } finally {
             if (null != vmObj) {

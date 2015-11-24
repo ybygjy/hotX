@@ -48,7 +48,7 @@ attach_jvm() {
     fi
 
     sudo -u admin /opt/taobao/java/bin/java ${BOOT_CLASSPATH} ${JVM_OPTS} \
-            -jar ./.hotX/hotX-agent.jar $pid $appName
+            -jar ./.hotX/hotX-core.jar $pid $appName
 }
 
 # the main

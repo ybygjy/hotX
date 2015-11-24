@@ -1,21 +1,17 @@
 package com.github.airst;
 
-
-import com.github.airst.CTools.CommonUtil;
-import com.github.airst.CTools.AgentUtil;
-
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 /**
- * Description: AgentClass
+ * Description: HotXLauncher
  * User: qige
  * Date: 15/2/7
  * Time: 16:42
  */
-public class AgentClass {
+public class HotXLauncher {
 
     private static volatile ClassLoader hotXGlobalLoader;
 
@@ -26,9 +22,9 @@ public class AgentClass {
         if (null != hotXGlobalLoader) {
             hotXLoader = hotXGlobalLoader;
         } else {
-
-            hotXLoader = new URLClassLoader(new URL[]{new URL("file:" +
-                    AgentClass.class.getProtectionDomain().getCodeSource().getLocation().getFile())}) {
+            String path = HotXLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+            path = path.replace("hotX-agent.jar", "hotX-core.jar");
+            hotXLoader = new URLClassLoader(new URL[]{new URL("file:" + path)}) {
 
                 @Override
                 protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -54,7 +50,7 @@ public class AgentClass {
 
         Class<?> bClass = hotXLoader.loadClass("com.github.airst.HotXBoot");
         bClass.getMethod("boot", String.class, Instrumentation.class, Method.class).invoke(null, args, inst,
-                AgentClass.class.getMethod("resetHotXClassLoader"));
+                HotXLauncher.class.getMethod("resetHotXClassLoader"));
 
         System.out.println("hotX boot finish..." + inst);
     }
