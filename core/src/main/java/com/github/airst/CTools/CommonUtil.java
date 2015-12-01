@@ -1,6 +1,10 @@
 package com.github.airst.CTools;
 
 import com.github.airst.StaticContext;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -49,6 +53,30 @@ public class CommonUtil {
 
         return buffer.toByteArray();
     }
+
+    public static Object autowire(Object applicationContext, Class targetClass, boolean check) throws Exception {
+
+        Class<?> aClass = StaticContext.getClassLoader().loadClass(WebApplicationContext.class.getName());
+        Method getAutowireCapableBeanFactory = aClass.getMethod("getAutowireCapableBeanFactory");
+        Object autowireCapableBeanFactory = getAutowireCapableBeanFactory.invoke(applicationContext);
+
+        Class<?> bClass = StaticContext.getClassLoader().loadClass(AutowireCapableBeanFactory.class.getName());
+        Method autowire = bClass.getMethod("autowire", Class.class, int.class, boolean.class);
+        return autowire.invoke(autowireCapableBeanFactory, targetClass, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, check);
+    }
+
+    public static Object getBean(Object applicationContext, String beanName) throws Exception {
+        Class<?> aClass = StaticContext.getClassLoader().loadClass(BeanFactory.class.getName());
+        Method getBean = aClass.getMethod("getBean", String.class);
+        return getBean.invoke(applicationContext, beanName);
+    }
+
+    public static boolean containsBean(Object applicationContext, String beanName) throws Exception {
+        Class<?> aClass = StaticContext.getClassLoader().loadClass(BeanFactory.class.getName());
+        Method getBean = aClass.getMethod("containsBean", String.class);
+        return (Boolean) getBean.invoke(applicationContext, beanName);
+    }
+
     /**
      * ====================================================
      * Class Load Part
@@ -62,28 +90,14 @@ public class CommonUtil {
     }
 
     public static Class<?> attachClass(String className, ClassLoader classLoader) throws Exception {
-        className = "/" + className.replace(".", "/") + ".class";
-        InputStream stream = CommonUtil.class.getResourceAsStream(className);
-        byte[] data = readStream(stream, stream.available());
-        return attachClass(data, classLoader);
-    }
-
-    public static Set<ClassLoader> searchClassLoader() {
-        long startTimeMillis = System.currentTimeMillis();
-        Class[] classes = StaticContext.getInst().getAllLoadedClasses();
-        Set<ClassLoader> classLoaders = new HashSet<ClassLoader>();
-        for (Class cls : classes) {
-            ClassLoader classLoader = cls.getClassLoader();
-            if (classLoader != null && classLoader.getClass() != null) {
-                String simpleName = classLoader.getClass().getSimpleName();
-                if (simpleName.endsWith("WebappClassLoader") || simpleName.endsWith("WebAppClassLoader")) {
-                    classLoaders.add(classLoader);
-                }
-            }
+        try {
+            return StaticContext.getClassLoader().loadClass("com.tmall.legao.client.service.query.LegaoQueryClient");
+        } catch (Exception e) {
+            className = "/" + className.replace(".", "/") + ".class";
+            InputStream stream = CommonUtil.class.getResourceAsStream(className);
+            byte[] data = readStream(stream, stream.available());
+            return attachClass(data, classLoader);
         }
-        long endTimeMillis = System.currentTimeMillis();
-        System.out.println("Find ClassLoader costs: " + (endTimeMillis - startTimeMillis));
-        return classLoaders;
     }
 
 }

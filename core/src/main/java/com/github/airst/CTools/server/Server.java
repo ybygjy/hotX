@@ -49,6 +49,8 @@ public class Server {
     }
 
     public void shutdown() throws IOException {
-        serverSocket.close();
+        if(serverSocket != null) {
+            serverSocket.close();
+        }
     }
 }

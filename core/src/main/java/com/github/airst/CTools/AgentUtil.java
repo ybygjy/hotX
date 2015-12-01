@@ -1,11 +1,11 @@
 package com.github.airst.CTools;
 
-import com.github.airst.BTools.InnerUtil;
 import com.github.airst.StaticContext;
 
 import java.io.File;
 import java.lang.instrument.ClassDefinition;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
@@ -34,19 +34,17 @@ public class AgentUtil {
             aClass = ClassUtil.loadClass(code);
         }
 
-        if(runTest == null) {
-            Class<?> innerUtil;
-            try {
-                innerUtil = CommonUtil.attachClass(InnerUtil.class.getName(), StaticContext.getClassLoader());
-            } catch (Throwable e) {
-                innerUtil = StaticContext.getClassLoader().loadClass(InnerUtil.class.getName());
-            }
-            runTest = innerUtil.getDeclaredMethod("runTestMethod", Class.class, String[].class);
+        Object bean = CommonUtil.autowire(StaticContext.getWebApplicationContext(), aClass, true);
+
+        Method method = aClass.getMethod("test", String[].class);
+        if(Modifier.isStatic(method.getModifiers())) {
+            method.invoke(null, (Object)p);
+        } else {
+            method.invoke(bean, (Object)p);
         }
 
-        runTest.invoke(null, aClass, p);
-
     }
+
 
     public static void replaceClassFile(File classFile) throws Exception {
         replaceClassFile(CommonUtil.readFile(classFile));

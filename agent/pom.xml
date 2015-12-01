@@ -40,6 +40,7 @@
                             <archive>
                                 <manifestEntries>
                                     <Agent-Class>com.github.airst.HotXLauncher</Agent-Class>
+                                    <Main-Class>com.github.airst.HotXLauncher</Main-Class>
                                     <Can-Redefine-Classes>true</Can-Redefine-Classes>
                                     <Can-Retransform-Classes>true</Can-Retransform-Classes>
                                 </manifestEntries>

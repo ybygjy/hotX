@@ -1,12 +1,16 @@
 package com.github.airst;
 
-import com.github.airst.CTools.CommonUtil;
 import com.github.airst.CTools.StringUtil;
 import com.github.airst.CTools.server.Server;
-import org.springframework.util.StringUtils;
+import com.github.airst.database.MySqlExecutor;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.web.context.ContextLoader;
 
+import javax.sql.DataSource;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Description: HotXBoot
@@ -20,38 +24,42 @@ public class HotXBoot {
 
     private static Method resetClassLoaderMethod = null;
 
-    public static synchronized void boot(String appName, Instrumentation inst, Method resetMethod) {
+    public static synchronized void boot(String appName, Instrumentation inst, Method resetMethod, ClassLoader classLoader) throws Exception {
         try {
             resetClassLoaderMethod = resetMethod;
-            if(!StringUtil.isBlank(appName) && !StringUtil.isNullStr(appName)) {
+            if (StaticContext.getInst() == null) {
+
+                StaticContext.setInst(inst);
+                StaticContext.setClassLoader(classLoader);
+
+                fetchSpringContext();
+                start();
+            }
+            if (!StringUtil.isBlank(appName) && !StringUtil.isNullStr(appName)) {
                 StaticContext.setAppName(appName);
             }
-            if(StaticContext.getInst() == null) {
-                StaticContext.setInst(inst);
-
-                boolean isOk = false;
-                for (ClassLoader classLoader : CommonUtil.searchClassLoader()) {
-                    try {
-                        Thread.currentThread().setContextClassLoader(classLoader);
-                        StaticContext.setClassLoader(classLoader);
-
-                        start();
-
-                        isOk = true;
-                        break;
-                    } catch (Throwable e) {
-                        isOk = false;
-                        e.printStackTrace(System.out);
-                        System.out.println(e.getMessage());
-                    }
-                }
-
-                System.out.println("Engine start " + (isOk ? "success!" : "failed!"));
-            }
-        } catch (Throwable e) {
-            e.printStackTrace(System.out);
-            System.out.println(e.getMessage());
+            initDbExecutor();
+        } catch (Exception e) {
+            shutdown();
+            throw e;
         }
+    }
+    public static void fetchSpringContext() throws Exception {
+        if(StaticContext.getWebApplicationContext() == null) {
+            Thread.currentThread().setContextClassLoader(HotXBoot.class.getClassLoader().getParent());
+            StaticContext.setWebApplicationContext(ContextLoader.getCurrentWebApplicationContext());
+        }
+    }
+
+    public static void initDbExecutor() throws Exception {
+
+        AutowireCapableBeanFactory beanFactory = StaticContext.getWebApplicationContext().getAutowireCapableBeanFactory();
+
+        @SuppressWarnings("unchecked")
+        Map<String, DataSource> dataSourceMap=((ConfigurableListableBeanFactory)beanFactory).getBeansOfType(DataSource.class);
+
+        StaticContext.setDbExecutor(new MySqlExecutor(dataSourceMap));
+
     }
 
     private static void start() throws Exception {
@@ -62,9 +70,11 @@ public class HotXBoot {
         server.service();
     }
 
-    public static void shutdown() throws Exception{
-        server.shutdown();
-        server = null;
+    public static synchronized void shutdown() throws Exception{
+        if(server != null) {
+            server.shutdown();
+            server = null;
+        }
         StaticContext.dispose();
 
         resetClassLoaderMethod.invoke(null);

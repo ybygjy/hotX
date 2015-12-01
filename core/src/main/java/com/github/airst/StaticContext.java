@@ -1,5 +1,8 @@
 package com.github.airst;
 
+import com.github.airst.database.DBExecutor;
+import org.springframework.web.context.WebApplicationContext;
+
 import java.lang.instrument.Instrumentation;
 
 /**
@@ -14,7 +17,11 @@ public class StaticContext {
 
     private static ClassLoader classLoader;
 
-    private static String appName = "";
+    private static WebApplicationContext webApplicationContext;
+
+    private static DBExecutor dbExecutor;
+
+    private static String appName = null;
 
     public static Instrumentation getInst() {
         return inst;
@@ -40,8 +47,29 @@ public class StaticContext {
         StaticContext.appName = appName;
     }
 
+    public static WebApplicationContext getWebApplicationContext() {
+        return webApplicationContext;
+    }
+
+    public static void setWebApplicationContext(WebApplicationContext webApplicationContext) {
+        if(webApplicationContext == null) {
+            throw new RuntimeException("webApplicationContext is null");
+        }
+        StaticContext.webApplicationContext = webApplicationContext;
+    }
+
+    public static DBExecutor getDbExecutor() {
+        return dbExecutor;
+    }
+
+    public static void setDbExecutor(DBExecutor dbExecutor) {
+        StaticContext.dbExecutor = dbExecutor;
+    }
+
     public static void dispose() {
         inst = null;
         classLoader = null;
+        webApplicationContext = null;
+        dbExecutor = null;
     }
 }

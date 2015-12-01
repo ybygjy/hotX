@@ -4,7 +4,9 @@ import com.github.airst.CTools.AgentUtil;
 import com.github.airst.CTools.StringUtil;
 import com.github.airst.HotXBoot;
 import com.github.airst.StaticContext;
-import org.springframework.util.CollectionUtils;
+import com.github.airst.database.MySqlExecutor;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class Execute {
     private static final String OPTION_SAVE_FILE = "saveFile";
     private static final String OPTION_HOT_SWAP = "hotSwap";
     private static final String OPTION_SHUTDOWN = "shutdown";
+    private static final String OPTION_RUN_SQL = "runSql";
     private static final String OPTION_PARAMETER = "parameter";
 
     private static final String MAIN_FILE = "mainFile";
@@ -71,6 +74,11 @@ public class Execute {
                     doHotSwap(entry.getValue());
                     msg += "hotSwap " + request.getParameter(entry.getKey()) + "\r\n";
                 }
+            } else if (OPTION_RUN_SQL.equalsIgnoreCase(option)) {
+                for (Map.Entry<String, byte[]> entry : fileMap.entrySet()) {
+                    doRunSql(entry.getValue());
+                    msg += "runLql " + request.getParameter(entry.getKey()) + "\r\n";
+                }
             } else if(OPTION_SHUTDOWN.equalsIgnoreCase(option)) {
                 doShutdown();
             } else {
@@ -113,6 +121,12 @@ public class Execute {
             writer.write(data);
             writer.close();
         }
+    }
+
+    private void doRunSql(byte[] data) throws Exception {
+        String sql = new String(data);
+        Object execute = ((MySqlExecutor) StaticContext.getDbExecutor()).execute(sql);
+        response.write((JSONObject.fromObject(execute).toString() + "\r\n").getBytes());
     }
 
     private File findTargetFile(File dir, String targetPath) throws Exception {
