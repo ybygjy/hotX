@@ -89,15 +89,4 @@ public class CommonUtil {
         return (Class<?>) method.invoke(classLoader, null, data, 0, data.length);
     }
 
-    public static Class<?> attachClass(String className, ClassLoader classLoader) throws Exception {
-        try {
-            return StaticContext.getClassLoader().loadClass("com.tmall.legao.client.service.query.LegaoQueryClient");
-        } catch (Exception e) {
-            className = "/" + className.replace(".", "/") + ".class";
-            InputStream stream = CommonUtil.class.getResourceAsStream(className);
-            byte[] data = readStream(stream, stream.available());
-            return attachClass(data, classLoader);
-        }
-    }
-
 }

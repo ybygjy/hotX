@@ -11,6 +11,13 @@
 
     <artifactId>agent</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>hotX-agent</finalName>
         <plugins>

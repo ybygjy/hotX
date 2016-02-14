@@ -1,4 +1,4 @@
-package com.github.airst.CTools.server;
+package com.github.airst.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.github.airst.CTools.server;
+package com.github.airst.server;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +33,7 @@ public class Worker implements Runnable {
 
         //解析数据
         Response response = new Response(out, socket);
-        Request request = new Request(in);
+        Request request = new Request(in, response);
 
         try {
             request.init();

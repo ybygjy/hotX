@@ -1,8 +1,9 @@
-package com.github.airst.CTools.server;
+package com.github.airst.server;
 
-import com.github.airst.CTools.CommonUtil;
+import com.google.common.io.ByteStreams;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class Request {
 
     private InputStream in;
+    private Response out;
 
     private Map<String, String> parameters = new HashMap<String, String>();
 
@@ -48,16 +50,20 @@ public class Request {
         return files.get(name);
     }
 
-    public Request(InputStream in) {
+    public Request(InputStream in, Response out) {
         this.in = in;
+        this.out = out;
     }
 
     public void init() throws Exception {
+        long startTimeMillis = System.currentTimeMillis();
         DataInputStream reader =  new DataInputStream(in);
 
         readHead(reader);
         readBody(reader);
 
+        long endTimeMillis = System.currentTimeMillis();
+//        out.write(("costs: " + (endTimeMillis - startTimeMillis) + "\r\n").getBytes());
     }
 
     private void readHead(DataInputStream reader) throws Exception {
@@ -77,7 +83,8 @@ public class Request {
     }
 
     private void readBody(DataInputStream reader) throws Exception {
-        byte[] bytes = CommonUtil.readStream(reader, contentLength);
+        byte[] bytes = new byte[contentLength];
+        ByteStreams.readFully(reader, bytes);
 //        System.out.write(bytes);
         boolean first = true;
         boolean binary = false;

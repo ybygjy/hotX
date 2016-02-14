@@ -57,7 +57,12 @@ main()
     if [ x$1 == xshutdown ]
     then
     curl -d "option=shutdown" "http://127.0.0.1:8080"
+    elif [ x$1 == xdebug ]
+    then
+    curl -d "option=shutdown" "http://127.0.0.1:8080"
+    sudo -u admin java -jar ./.hotX/hotX-agent.jar
     else
+    curl -d "option=shutdown" "http://127.0.0.1:8080"
     check_permission
     reset_for_env
 

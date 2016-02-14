@@ -1,5 +1,8 @@
 package com.github.airst;
 
+import com.github.airst.server.Server;
+
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.util.jar.JarFile;
@@ -16,6 +19,13 @@ public class HotXLauncher {
     private static volatile ClassLoader hotXGlobalLoader;
 
     private static final String loaderName = "com.github.airst.classLoader.HotXClassLoader";
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("http server.");
+        Server server = new Server(8080);
+        server.bind();
+        server.service();
+    }
 
     public static void agentmain(String args, Instrumentation inst) throws Exception {
         try {
