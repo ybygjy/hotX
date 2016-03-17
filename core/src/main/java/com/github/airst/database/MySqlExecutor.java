@@ -39,27 +39,17 @@ public class MySqlExecutor extends BaseExecutor {
 
     public static String selectDataSource(String sql) {
         if(!sql.contains("--")) {
-            throw new RuntimeException("not DataSource bean description,\n" +
-                    "'--${datasource}--\n" +
-                    "${sql}'");
+            throw new RuntimeException("not DataSource bean description, '${datasource}--${sql}'");
         }
-        String[] split = sql.split("--");
-        if(split.length != 2) {
-            throw new RuntimeException("SQL format error,\r\n'--${datasource}--\r\n${sql}'");
-        }
+        String[] split = sql.split("--", 2);
         return split[0];
     }
 
     public static String selectSQL(String sql) {
         if(!sql.contains("--")) {
-            throw new RuntimeException("not DataSource bean description,\n" +
-                    "'--${datasource}--\n" +
-                    "${sql}'");
+            throw new RuntimeException("not DataSource bean description, '${datasource}--${sql}'");
         }
-        String[] split = sql.split("--");
-        if(split.length != 2) {
-            throw new RuntimeException("SQL format error,\r\n'--${datasource}--\r\n${sql}'");
-        }
+        String[] split = sql.split("--", 2);
         return split[1];
     }
 

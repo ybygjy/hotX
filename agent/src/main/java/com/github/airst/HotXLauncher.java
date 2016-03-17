@@ -1,6 +1,8 @@
 package com.github.airst;
 
 import com.github.airst.server.Server;
+import sun.jvm.hotspot.debugger.*;
+import sun.jvm.hotspot.debugger.macosx.MacOSXDebuggerLocal;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -21,10 +23,12 @@ public class HotXLauncher {
     private static final String loaderName = "com.github.airst.classLoader.HotXClassLoader";
 
     public static void main(String[] args) throws Exception {
-        System.out.println("http server.");
-        Server server = new Server(8080);
-        server.bind();
-        server.service();
+        MacOSXDebuggerLocal debuggerLocal = new MacOSXDebuggerLocal(new MachineDescriptionIntelX86(), true);
+        debuggerLocal.attach(26532);
+//        System.out.println("http server.");
+//        Server server = new Server(8080);
+//        server.bind();
+//        server.service();
     }
 
     public static void agentmain(String args, Instrumentation inst) throws Exception {

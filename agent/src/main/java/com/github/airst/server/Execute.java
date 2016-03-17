@@ -46,9 +46,10 @@ public class Execute {
         System.out.println(data.length);
         if(data.length == 14 && "JDWP-Handshake".equals(new String(data))) {
             System.out.println("first");
+            response.chunk();
             DebuggerClient.getInstance().send(data);
             DebuggerClient.getInstance().read(14, response);
-            while(!response.isClosed()) {
+            while (!response.isClosed()) {
                 DebuggerClient.getInstance().read(11, response);
             }
             System.out.println("first failed");

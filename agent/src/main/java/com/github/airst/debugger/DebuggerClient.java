@@ -20,7 +20,8 @@ public class DebuggerClient {
 
     private final String host;
     private final int port;
-    private byte[] data1304 = new byte[1304];
+    private final int MAX = 1024;
+    private byte[] data1024 = new byte[MAX];
 
     private static DebuggerClient debuggerClient = null;
 
@@ -66,38 +67,38 @@ public class DebuggerClient {
         System.out.println("1 " + size);
         byte[] head = readData(size);
         System.out.println("1.1 " + size);
-        response.writeDirect(head, 0, size);
+        response.write(head, 0, size);
 
         int length = byte2int(head) - size;
         System.out.println("2 " + length);
         if (length > 0 && !"JDWP-Handshake".equals(new String(head, 0, 14))) {
-            while (length > 1304) {
-                byte[] data = readData(1304);
-                response.writeDirect(data, 0, 1304);
-                length -= 1304;
+            while (length > MAX) {
+                byte[] data = readData(MAX);
+                response.write(data, 0, MAX);
+                response.flush();
+                length -= MAX;
                 System.out.println("3 " + length);
             }
             byte[] data = readData(length);
             System.out.println("4.");
-            response.writeDirect(data, 0, length);
+            response.write(data, 0, length);
+            response.flush();
             return data;
         } else {
             System.out.println("5.");
+            response.flush();
             return head;
         }
     }
 
     private byte[] readData(int size) throws IOException {
-        byte[] buffer = data1304;
+        byte[] buffer = data1024;
         int nIdx = 0;
         int nReadLen;
 
         while (nIdx < size) {
             nReadLen = inputStream.read(buffer, nIdx, size - nIdx);
             if (nReadLen > 0) {
-                if (size == 11) {
-                    System.out.println("part " + nReadLen);
-                }
                 nIdx = nIdx + nReadLen;
             } else {
                 break;
