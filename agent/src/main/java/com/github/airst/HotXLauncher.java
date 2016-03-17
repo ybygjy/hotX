@@ -1,10 +1,5 @@
 package com.github.airst;
 
-import com.github.airst.server.Server;
-import sun.jvm.hotspot.debugger.*;
-import sun.jvm.hotspot.debugger.macosx.MacOSXDebuggerLocal;
-
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.util.jar.JarFile;
