@@ -24,6 +24,8 @@ curl: (7) couldn't connect to host
 1. 在idea编辑器，右键点击相应类文件，选择Send To Server，等待代码编译完成并弹出对话框
 2. 如代码编译失败可以尝试先build整个工程，成功后重试步骤1
 3. 在弹出对话框的Server Url一栏，输入http://ip|host:8080
+4. 在Ext Options 一栏，输入option=hotswap
+5. 点击OK，idea消息框中出现hotswap --> [ok] 表示热部署成功
 ```
 对于预发环境ip|host:8080需要换成已配置域名：
 110.75.98.154 stationplatform.hot.taobao.com
@@ -32,8 +34,6 @@ curl: (7) couldn't connect to host
 110.75.98.154 stationconsole.hot.cainiao-inc.com
 例如 http://stationplatform.hot.taobao.com
 ```
-4. 在Ext Options 一栏，输入option=hotswap
-5. 点击OK，idea消息框中出现hotswap --> [ok] 表示热部署成功
 
 ---
 
