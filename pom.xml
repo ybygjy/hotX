@@ -17,7 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-version>2.5.6</spring-version>
+        <spring-version>3.2.11.RELEASE</spring-version>
     </properties>
 
     <dependencyManagement>
@@ -103,7 +103,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>hotX-agent</finalName>
+        <finalName>hotX</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -114,31 +114,6 @@
                     <encoding>UTF-8</encoding>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <archive>
-                                <manifestEntries>
-                                    <Agent-Class>AgentClass</Agent-Class>
-                                    <Main-Class>Engine</Main-Class>
-                                    <Can-Redefine-Classes>true</Can-Redefine-Classes>
-                                    <Can-Retransform-Classes>true</Can-Retransform-Classes>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
