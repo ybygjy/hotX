@@ -62,6 +62,7 @@ public class Engine {
         final Class<?> vmClass = loader.loadClass("com.sun.tools.attach.VirtualMachine");
 
         autoSetPid(configure);
+        autoSetApp(configure);
 
         Object attachVmdObj = null;
         for (Object obj : (List<?>) vmClass.getMethod("list", (Class<?>[]) null).invoke(null, (Object[]) null)) {
@@ -116,6 +117,30 @@ public class Engine {
                 line = line.trim().split("\\s+")[1];
                 configure.setPid(Integer.valueOf(line.trim()));
                 System.out.println(configure.getPid());
+            }
+            is.close();
+            isr.close();
+            br.close();
+        }
+    }
+
+    private void autoSetApp(Configure configure) throws IOException {
+        String c = "ls -d /home/admin/*/target | awk -F/ '{print $4}'";
+        String[] cmd = {"/bin/sh", "-c", c};//ok
+        if(configure.getAppName() == null) {
+            // 使用Runtime来执行command，生成Process对象
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(cmd);
+            // 取得命令结果的输出流
+            InputStream is = process.getInputStream();
+            // 用一个读输出流类去读
+            InputStreamReader isr = new InputStreamReader(is);
+            // 用缓冲器读行
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                configure.setAppName(line.trim());
+                System.out.println(configure.getAppName());
             }
             is.close();
             isr.close();
