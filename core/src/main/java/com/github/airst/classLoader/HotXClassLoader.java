@@ -26,15 +26,14 @@ public class HotXClassLoader extends URLClassLoader {
     }
 
     public static synchronized ClassLoader get(String path, ClassLoader loader) throws Exception {
-        HotXClassLoader hotXClassLoader = new HotXClassLoader(new URL[]{new URL("file:" + path)}, loader);
         try {
             Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             addURL.setAccessible(true);
-            addURL.invoke(hotXClassLoader, new URL("file:" + path.replace("hotX-core.jar", "hotX-lib.jar")));
+            addURL.invoke(loader, new URL("file:" + path.replace("hotX-core.jar", "hotX-lib.jar")));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        return hotXClassLoader;
+        return new HotXClassLoader(new URL[]{new URL("file:" + path)}, loader);
     }
 
 }
