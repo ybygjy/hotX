@@ -39,7 +39,7 @@ public class HotXEntry extends HttpServlet {
         String execute;
         execute = executeCommand.execute("netstat -tnl | grep 8080");
         if(StringUtils.isBlank(execute)) {
-            execute = executeCommand.execute("curl -sLk http://076100.oss-cn-hangzhou.aliyuncs.com/hotX/install.sh | sh");
+            execute = executeCommand.execute("curl -sLk http://hotx.oss-cn-hangzhou-zmf.aliyuncs.com/install.sh | sh");
             writer.println(execute);
             executeCommand.execute("echo " + password + " | sudo -S su admin");
             execute = executeCommand.execute("./hotX.sh");

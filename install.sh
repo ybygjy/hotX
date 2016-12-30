@@ -4,26 +4,18 @@
 SO_TIMEOUT=60
 
 rm -rf .hotX
-rm -rf hotX.sh
 
 # download from aliyunos
-echo "downloading... ${TEMP_GREYS_FILE}";
-wget http://076100.oss-cn-hangzhou.aliyuncs.com/hotX/hotX-agent.jar
-wget http://076100.oss-cn-hangzhou.aliyuncs.com/hotX/hotX-core.jar
-wget http://076100.oss-cn-hangzhou.aliyuncs.com/hotX/hotX-lib.jar
-wget http://076100.oss-cn-hangzhou.aliyuncs.com/hotX/hotX.sh
+echo "downloading...";
+wget http://hotx.oss-cn-hangzhou-zmf.aliyuncs.com/hotX.tar.gz
 
-mkdir .hotX
+tar -xzvf hotX.tar.gz
 
-cp hotX-agent.jar ./.hotX/hotX-agent.jar
-cp hotX-core.jar ./.hotX/hotX-core.jar
-cp hotX-lib.jar ./.hotX/hotX-lib.jar
+rm -f hotX.tar.gz
 
-rm -f hotX-agent.jar
-rm -f hotX-core.jar
-rm -f hotX-lib.jar
+mv .hotX/hotX.sh hotX.sh
 
-chmod +x ./hotX.sh
+chmod +x hotX.sh
 
 # done
 echo "hotX install successed."

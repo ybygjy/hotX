@@ -8,7 +8,7 @@
     <modules>
         <module>core</module>
         <module>agent</module>
-        <module>extlib</module>
+        <module>binary</module>
     </modules>
     <packaging>pom</packaging>
 
