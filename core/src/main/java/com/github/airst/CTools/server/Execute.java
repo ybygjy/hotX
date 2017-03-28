@@ -124,6 +124,9 @@ public class Execute {
 
     private void doRunSql(byte[] data) throws Exception {
         String sql = new String(data);
+        if(StaticContext.getDbExecutor() == null) {
+            throw new RuntimeException("Can't use this function,If it's are a Spring boot App,Please make sure you have a static getApplicationContext() function in your Main-Class!");
+        }
         Object execute = ((MySqlExecutor) StaticContext.getDbExecutor()).execute(sql);
         response.write((JSONObject.fromObject(execute).toString() + "\r\n").getBytes());
     }

@@ -63,7 +63,9 @@ public class HotXBoot {
     }
 
     public static void initDbExecutor() throws Exception {
-
+        if(StaticContext.getApplicationContext() == null) {
+            return;
+        }
         AutowireCapableBeanFactory beanFactory = StaticContext.getApplicationContext().getAutowireCapableBeanFactory();
 
         @SuppressWarnings("unchecked")

@@ -33,7 +33,9 @@ public class AgentUtil {
         } else {
             aClass = ClassUtil.loadClass(code);
         }
-
+        if(StaticContext.getApplicationContext() == null) {
+            throw new RuntimeException("Can't use this function,If it's are a Spring boot App,Please make sure you have a static getApplicationContext() function in your Main-Class!");
+        }
         Object bean = CommonUtil.autowire(StaticContext.getApplicationContext(), aClass, true);
 
         Method method = aClass.getMethod("test", String[].class);
