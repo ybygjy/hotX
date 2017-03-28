@@ -37,17 +37,7 @@ reset_for_env()
 
 attach_jvm() {
 
-    if [ x$1 != x ]
-    then
-    pid='-pid '$1
-    fi
-
-    if [ x$2 != x ]
-    then
-    appName='-appName '$2
-    fi
-
-    sudo -u admin /opt/taobao/java/bin/java ${BOOT_CLASSPATH} ${JVM_OPTS} \
+     echo $1 | sudo -S -u admin /opt/taobao/java/bin/java ${BOOT_CLASSPATH} ${JVM_OPTS} \
             -jar ./.hotX/hotX-core.jar $pid $appName
 }
 
@@ -66,12 +56,10 @@ main()
     check_permission
     reset_for_env
 
-    attach_jvm ${@}\
-        || exit_on_err 1 "attach to target jvm(${1}) failed."
+    attach_jvm ${@} \
+        || exit_on_err 1 "attach to target jvm failed."
     fi
 
 }
-
-
 
 main "${@}"

@@ -41,8 +41,7 @@ public class HotXEntry extends HttpServlet {
         if(StringUtils.isBlank(execute)) {
             execute = executeCommand.execute("curl -sLk http://hotx.oss-cn-hangzhou-zmf.aliyuncs.com/install.sh | sh");
             writer.println(execute);
-            executeCommand.execute("echo " + password + " | sudo -S su admin");
-            execute = executeCommand.execute("./hotX.sh");
+            execute = executeCommand.execute("./hotX.sh " + password);
             writer.println(execute);
             writer.flush();
         }
