@@ -5,6 +5,7 @@ import com.github.airst.CTools.server.Server;
 import com.github.airst.database.MySqlExecutor;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
 import javax.sql.DataSource;
@@ -24,13 +25,14 @@ public class HotXBoot {
 
     private static Method resetClassLoaderMethod = null;
 
-    public static synchronized void boot(String appName, Instrumentation inst, Method resetMethod, ClassLoader classLoader) throws Exception {
+    public static synchronized void boot(String appName, Instrumentation inst, Method resetMethod, ClassLoader classLoader, Class applicationClass) throws Exception {
         try {
             resetClassLoaderMethod = resetMethod;
             if (StaticContext.getInst() == null) {
 
                 StaticContext.setInst(inst);
                 StaticContext.setClassLoader(classLoader);
+                StaticContext.setApplicationClass(applicationClass);
 
                 fetchSpringContext();
                 start();
@@ -45,15 +47,24 @@ public class HotXBoot {
         }
     }
     public static void fetchSpringContext() throws Exception {
-        if(StaticContext.getWebApplicationContext() == null) {
-            Thread.currentThread().setContextClassLoader(HotXBoot.class.getClassLoader().getParent());
-            StaticContext.setWebApplicationContext(ContextLoader.getCurrentWebApplicationContext());
+         if(StaticContext.getApplicationContext() == null) {
+             if(StaticContext.getApplicationClass() != null) {
+                 Method method = StaticContext.getApplicationClass().getMethod("getApplicationContext");
+                 ApplicationContext applicationContext = (ApplicationContext) method.invoke(null);
+                 if(applicationContext != null) {
+                     StaticContext.setApplicationContext(applicationContext);
+                 }
+             }
+             if(StaticContext.getApplicationContext() == null) {
+                 Thread.currentThread().setContextClassLoader(HotXBoot.class.getClassLoader().getParent());
+                 StaticContext.setApplicationContext(ContextLoader.getCurrentWebApplicationContext());
+             }
         }
     }
 
     public static void initDbExecutor() throws Exception {
 
-        AutowireCapableBeanFactory beanFactory = StaticContext.getWebApplicationContext().getAutowireCapableBeanFactory();
+        AutowireCapableBeanFactory beanFactory = StaticContext.getApplicationContext().getAutowireCapableBeanFactory();
 
         @SuppressWarnings("unchecked")
         Map<String, DataSource> dataSourceMap=((ConfigurableListableBeanFactory)beanFactory).getBeansOfType(DataSource.class);

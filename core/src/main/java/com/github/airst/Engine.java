@@ -61,8 +61,8 @@ public class Engine {
         final Class<?> vmdClass = loader.loadClass("com.sun.tools.attach.VirtualMachineDescriptor");
         final Class<?> vmClass = loader.loadClass("com.sun.tools.attach.VirtualMachine");
 
-        autoSetPid(configure);
         autoSetApp(configure);
+        autoSetPid(configure);
 
         Object attachVmdObj = null;
         for (Object obj : (List<?>) vmClass.getMethod("list", (Class<?>[]) null).invoke(null, (Object[]) null)) {
@@ -97,7 +97,7 @@ public class Engine {
     private void autoSetPid(Configure configure) throws IOException {
         //String cmd = "ifconfig";//ok
         //String cmd = "sar -u 1 1| awk 'NR==4 {print $8}'";//空白。管道不支持
-        String c = "ps -ef | grep java | grep tomcat";
+        String c = "ps -ef | grep java | grep " + configure.getAppName();
         String[] cmd = {"/bin/sh", "-c", c};//ok
         if(configure.getPid() == null) {
             // 使用Runtime来执行command，生成Process对象

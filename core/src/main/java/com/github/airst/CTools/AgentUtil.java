@@ -34,7 +34,7 @@ public class AgentUtil {
             aClass = ClassUtil.loadClass(code);
         }
 
-        Object bean = CommonUtil.autowire(StaticContext.getWebApplicationContext(), aClass, true);
+        Object bean = CommonUtil.autowire(StaticContext.getApplicationContext(), aClass, true);
 
         Method method = aClass.getMethod("test", String[].class);
         if(Modifier.isStatic(method.getModifiers())) {

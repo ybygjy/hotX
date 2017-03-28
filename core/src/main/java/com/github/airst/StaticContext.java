@@ -1,7 +1,7 @@
 package com.github.airst;
 
 import com.github.airst.database.DBExecutor;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 
 import java.lang.instrument.Instrumentation;
 
@@ -17,9 +17,11 @@ public class StaticContext {
 
     private static ClassLoader classLoader;
 
-    private static WebApplicationContext webApplicationContext;
+    private static ApplicationContext applicationContext;
 
     private static DBExecutor dbExecutor;
+
+    private static Class applicationClass;
 
     private static String appName = null;
 
@@ -47,15 +49,15 @@ public class StaticContext {
         StaticContext.appName = appName;
     }
 
-    public static WebApplicationContext getWebApplicationContext() {
-        return webApplicationContext;
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
-    public static void setWebApplicationContext(WebApplicationContext webApplicationContext) {
-        if(webApplicationContext == null) {
-            throw new RuntimeException("webApplicationContext is null");
+    public static void setApplicationContext(ApplicationContext applicationContext) {
+        if(applicationContext == null) {
+            throw new RuntimeException("applicationContext is null");
         }
-        StaticContext.webApplicationContext = webApplicationContext;
+        StaticContext.applicationContext = applicationContext;
     }
 
     public static DBExecutor getDbExecutor() {
@@ -66,10 +68,19 @@ public class StaticContext {
         StaticContext.dbExecutor = dbExecutor;
     }
 
+    public static Class getApplicationClass() {
+        return applicationClass;
+    }
+
+    public static void setApplicationClass(Class applicationClass) {
+        StaticContext.applicationClass = applicationClass;
+    }
+
     public static void dispose() {
         inst = null;
         classLoader = null;
-        webApplicationContext = null;
+        applicationContext = null;
         dbExecutor = null;
+        applicationClass = null;
     }
 }
