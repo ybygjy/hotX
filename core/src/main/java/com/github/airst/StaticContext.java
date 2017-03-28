@@ -50,13 +50,13 @@ public class StaticContext {
     }
 
     public static ApplicationContext getApplicationContext() {
+        if(applicationContext == null) {
+            throw new RuntimeException("Can't use this function,If it's are a Spring boot App,Please make sure you have a static getApplicationContext() function in your Main-Class!");
+        }
         return applicationContext;
     }
 
     public static void setApplicationContext(ApplicationContext applicationContext) {
-        if(applicationContext == null) {
-            throw new RuntimeException("applicationContext is null");
-        }
         StaticContext.applicationContext = applicationContext;
     }
 
