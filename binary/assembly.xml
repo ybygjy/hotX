@@ -11,19 +11,19 @@
 	<files>
 		<file>
 			<!-- 要压缩的目录，请按实际目录填写 -->
-			<source>../agent/target/hotX-agent-jar-with-dependencies.jar</source>
+			<source>${project.basedir}/../agent/target/hotX-agent-jar-with-dependencies.jar</source>
 			<!-- 输出的目录,此处为空即可 -->
 			<destName>hotX-agent.jar</destName>
 		</file>
 		<file>
 			<!-- 要压缩的目录，请按实际目录填写 -->
-			<source>../core/target/hotX-core-jar-with-dependencies.jar</source>
+			<source>${project.basedir}/../core/target/hotX-core-jar-with-dependencies.jar</source>
 			<!-- 输出的目录,此处为空即可 -->
 			<destName>hotX-core.jar</destName>
 		</file>
 		<file>
 			<!-- 要压缩的目录，请按实际目录填写 -->
-			<source>../hotX.sh</source>
+			<source>${project.basedir}/../hotX.sh</source>
 		</file>
 	</files>
 </assembly>

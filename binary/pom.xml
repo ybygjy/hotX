@@ -14,11 +14,21 @@
         <finalName>hotX</finalName>
         <plugins>
             <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jar-plugin</artifactId>
+               <executions>
+                   <execution>
+                       <id>default-jar</id>
+                       <phase>none</phase>
+                   </execution>
+               </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
@@ -32,11 +42,13 @@
                             <goal>attached</goal>
                         </goals>
                         <phase>package</phase>
+                        <!--
                         <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
+                          <descriptorRefs>
+                             <descriptorRef>jar-with-dependencies</descriptorRef>
+                          </descriptorRefs>
                         </configuration>
+                        -->
                     </execution>
                 </executions>
                 <configuration>
